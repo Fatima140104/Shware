@@ -1,6 +1,8 @@
 # Ignore environment variables file
 .env
 
+serviceAccountKey.json
+
 # Ignore cache files
 cache/
 
