@@ -18,6 +18,12 @@
     <div class="form-actions">{{ form.submit(class="btn btn-primary") }}</div>
   </form>
 
+  <form method="get" action="{{ url_for('auth.google_login') }}">
+    <div class="form-actions">
+      <button type="submit" class="btn btn-secondary">Login with Google</button>
+    </div>
+  </form>
+
   <div class="auth-links">
     <p>
       Don't have an account?
