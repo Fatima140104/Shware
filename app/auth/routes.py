@@ -12,56 +12,52 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('main.home'))
-    
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+
+    print('Route accessed')  
     form = LoginForm()
+    print('Form created')  
+    
+    if request.method == 'POST':
+        print('POST request received')  
+        print('Form data:', form.data)  
+    else:
+        print('GET request received')
+    
+    print('Form errors:', form.errors)
+
     if form.validate_on_submit():
+        print('Form submitted successfully!')  
         email = form.email.data
         password = form.password.data
         try:
-            # Sign in with email and password using Firebase Auth
-            auth = firebase_admin.auth
-            user_record = auth.get_user_by_email(email)
+            firebase_user = firebase_admin.auth.get_user_by_email(email)
             
-            # Find user in the local database
+            auth = Config.firebase.auth()
+            user_auth = auth.sign_in_with_email_and_password(email, password)
+            print('Firebase user found and authenticated:', email)
+
+            # Check if user exists in our database
             user = User.query.filter_by(email=email).first()
             if not user:
-                # Create the user in the local database if not exists
                 user = User(
-                    id_=user_record.uid,
-                    name=user_record.display_name or email.split('@')[0],
+                    id_=firebase_user.uid,
+                    name=firebase_user.display_name or email.split('@')[0],
                     email=email,
-                    profile_pic=user_record.photo_url or ""
+                    profile_pic=firebase_user.photo_url or ""
                 )
                 db.session.add(user)
                 db.session.commit()
-                
-                # Create or update user in Firestore
-                firestore_db = firestore.client()
-                firestore_db.collection('users').document(user_record.uid).set({
-                    'name': user_record.display_name or email.split('@')[0],
-                    'email': email,
-                    'profile_pic': user_record.photo_url or "",
-                    'created_at': datetime.now(),
-                    'last_login': datetime.now(),
-                    'auth_provider': 'email'
-                })
-                
-            # Log in the user
+
             login_user(user)
-            
-            # Update last login time
-            firestore_db = firestore.client()
-            firestore_db.collection('users').document(user_record.uid).update({
-                'last_login': datetime.now()
-            })
-            
             flash('Login successful!', 'success')
             return redirect(url_for('dashboard.dashboard'))
         except Exception as e:
-            flash(f'Login failed: {str(e)}', 'danger')
-    
+            print('Error during login:', str(e))  
+            form.password.errors = ["Invalid email or password. Please try again."]
+
+    print('Form not submitted')  
     return render_template('login.html', form=form, config=Config)
 
 @auth_bp.route('/handle_firebase_auth', methods=['POST'])
@@ -141,7 +137,7 @@ def register():
     form = RegistrationForm()
     print("Form data: 1") 
     if form.validate_on_submit():
-        print("Form data: 2")  # Debugging line
+        print("Form data: 2")  
         email = form.email.data
         password = form.password.data
         username = form.name.data if hasattr(form, 'name') else email.split('@')[0]

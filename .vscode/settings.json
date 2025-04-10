@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["dotenv", "Firestore", "jsonify", "pyrebase", "userinfo"]
+  "cSpell.words": [
+    "dotenv",
+    "Firestore",
+    "jsonify",
+    "pyrebase",
+    "Shware",
+    "userinfo"
+  ]
 }

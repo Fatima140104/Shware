@@ -4,7 +4,7 @@ import dotenv
 dotenv.load_dotenv('.env')
 
 class Config:
-    SECRET_KEY = os.getenv('SECRET_KEY') or 'you-will-never-guess'
+    SECRET_KEY = os.getenv('SECRET_KEY') or 'shware'
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI') or 'sqlite:///site.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     FIREBASE_CONFIG = {

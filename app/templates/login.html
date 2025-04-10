@@ -1,5 +1,5 @@
-{% extends "base.html" %} {% block title %}Login | Flask Firebase App{% endblock
-%} {% block content %}
+{% extends "base.html" %} {% block title %}Login | Shware{% endblock %} {% block
+content %}
 <section class="auth-form">
   <h2>Login</h2>
   <form method="POST" action="{{ url_for('auth.login') }}">
@@ -7,17 +7,23 @@
 
     <div class="form-group">
       <label for="email">Email</label>
-      {{ form.email(class="form-control") }}
+      {{ form.email(class="form-control") }}{% if form.email.errors %}
+      <div class="invalid-feedback d-block">
+        {% for error in form.email.errors %} {{ error }} {% endfor %}
+      </div>
+      {% endif %}
     </div>
 
     <div class="form-group">
       <label for="password">Password</label>
-      {{ form.password(class="form-control") }}
+      {{ form.password(class="form-control") }}{% if form.password.errors %}
+      <div class="invalid-feedback d-block">
+        {% for error in form.password.errors %} {{ error }} {% endfor %}
+      </div>
+      {% endif %}
     </div>
 
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Login</button>
-    </div>
+    <div class="form-actions">{{ form.submit(class="btn btn-primary") }}</div>
   </form>
 
   <div class="social-login mt-4">
@@ -33,7 +39,6 @@
   </div>
 </section>
 
-<!-- Add Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.js"></script>
